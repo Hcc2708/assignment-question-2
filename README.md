@@ -5,3 +5,5 @@ use npx jest highlightHTMLContent.test.js command to perform unit testing of the
 
 
 in case issues arises while running the program then go to package.json and press the debug button generated.
+
+## if still facing any error then please copy the code and run in your IDE
