@@ -1,28 +1,61 @@
-function highlightHTMLContent(htmlContent, plainText, plainTextPositions) {
-  const htmlPositions = [];
+function highlightHTMLContent(htmlContent, plainText, plainTextPositions){
+  let mergedString ="";
   let startIndex = 0;
-
-  for (const { start, end } of plainTextPositions) {
-    const plainTextSubstring = plainText.substring(start, end);
-    const htmlStartIndex = htmlContent.indexOf(plainTextSubstring, startIndex);
-    const htmlEndIndex = htmlStartIndex + plainTextSubstring.length;
-    if (htmlStartIndex !== -1) {
-      htmlPositions.push({ start: htmlStartIndex, end: htmlEndIndex });
-      startIndex = htmlEndIndex;
-    }
+  for(let {start, end} of plainTextPositions){
+      start += startIndex;
+      end += startIndex;
+      plainText = plainText.slice(0, start) + "<mark>" + plainText.slice(start, end)+"</mark>" + plainText.slice(end);
+      startIndex += 13;
+      }
+  let len1 = htmlContent.length;
+  let len2 = plainText.length;
+  let i = 0;
+  let j = 0;
+  for( ;i<len1 && j<len2;)
+  {
+      while(htmlContent[i] === plainText[j])
+      {
+          mergedString += htmlContent[i];
+          i++;
+          j++;
+      }
+      if(htmlContent[i] === '<')
+      {
+          while(htmlContent[i] != '>')
+          {
+              mergedString += htmlContent[i];
+              i++;
+          }
+          mergedString += htmlContent[i];
+          i++;
+      }
+      if(plainText[j] === '<')
+      {
+          while(plainText[j] != '>')
+          {
+              mergedString += plainText[j];
+              j++;
+          }
+          mergedString += plainText[j];
+          j++;
+      }
+      if(plainText[j] === ' ' && htmlContent[i] != ' ')j++;
+      if(htmlContent[i] === ' ' && plainText[j] != ' ')
+      {
+          mergedString += htmlContent[i];
+          i++;
+      }
   }
-
-  let highlightedContent = htmlContent;
-  let offset = 0;
-  for (const { start, end } of htmlPositions) {
-    const markedContent = `<mark>${highlightedContent.slice(start + offset, end + offset)}</mark>`;
-    highlightedContent =
-      highlightedContent.slice(0, start + offset) +
-      markedContent +
-      highlightedContent.slice(end + offset);
-    offset += markedContent.length - (end - start);
+  while(i< len1)
+  {
+      mergedString += htmlContent[i];
+      i++;
   }
-
-  return highlightedContent;
+  while(j< len2)
+  {
+      mergedString += plainText[j];
+      j++;
+  }
+  return mergedString;
 }
 module.exports = highlightHTMLContent;
